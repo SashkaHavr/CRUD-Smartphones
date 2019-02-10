@@ -1,0 +1,86 @@
+﻿<UserControl x:Class="CRUD_proj.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CRUD_proj.Views"
+             xmlns:design="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
+             xmlns:infr="clr-namespace:CRUD_proj.Infrastructure"
+             mc:Ignorable="d" 
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             TextElement.FontWeight="Regular"
+             TextElement.FontSize="13"
+             TextOptions.TextFormattingMode="Ideal" 
+             TextOptions.TextRenderingMode="Auto"
+             Background="{DynamicResource MaterialDesignPaper}"
+             FontFamily="{StaticResource MaterialDesignFont}">
+    <UserControl.DataContext>
+        <infr:ViewModelLocator/>
+    </UserControl.DataContext>
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  DataContext="{Binding SettingsViewModel}"
+                  MaxHeight="400">
+        <DockPanel>
+            <ComboBox
+                Margin="10"
+                DockPanel.Dock="Top"
+                HorizontalAlignment="Center"
+                Style="{StaticResource MaterialDesignFloatingHintComboBox}"
+                design:HintAssist.Hint="{Binding LocalizationManager.LanguageHint}"
+                ItemsSource="{Binding LocalizationManager.AvailibleLanguages}"
+                SelectedItem="{Binding WindowSettings.Culture}"/>
+            <CheckBox
+                HorizontalAlignment="Center"
+                DockPanel.Dock="Top"
+                Margin="10"
+                IsChecked="{Binding IsFullscreen}"
+                Content="{Binding LocalizationManager.FullScreenText}"/>
+            <CheckBox
+                HorizontalAlignment="Center"
+                DockPanel.Dock="Top"
+                Margin="10"
+                IsChecked="{Binding WindowSettings.LoadOnOpening}"
+                Content="{Binding LocalizationManager.LoadOnOpeningText}"/>
+            <CheckBox
+                HorizontalAlignment="Center"
+                DockPanel.Dock="Top"
+                Margin="10"
+                IsChecked="{Binding WindowSettings.SaveOnClosing}"
+                Content="{Binding LocalizationManager.SaveOnClosingText}"/>
+            <DockPanel DockPanel.Dock="Top" Margin="5">
+                <TextBlock
+                DockPanel.Dock="Left"
+                VerticalAlignment="Bottom"
+                Style="{StaticResource MaterialDesignBody2TextBlock}"
+                Text="{Binding LocalizationManager.ImageSizeText}"/>
+                <Slider
+                DockPanel.Dock="Right"
+                Minimum="100"
+                Maximum="400"
+                Value="{Binding WindowSettings.ImageHeight}"
+                Style="{StaticResource MaterialDesignDiscreteSlider}"
+                Width="300"/>
+            </DockPanel>
+            <Grid DockPanel.Dock="Top">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Button 
+                    Margin="10"
+                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    Content="{Binding LocalizationManager.SaveBtnText}"
+                    Command="{x:Static wpf:DialogHost.CloseDialogCommand}"
+                    CommandParameter="Save"/>
+                <Button
+                    Margin="10"
+                    Grid.Column="2"
+                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    Content="{Binding LocalizationManager.CancelBtnText}"
+                    Command="{x:Static wpf:DialogHost.CloseDialogCommand}"
+                    CommandParameter="Cancel"/>
+            </Grid>
+        </DockPanel>
+    </ScrollViewer>
+</UserControl>

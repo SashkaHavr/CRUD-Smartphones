@@ -1,0 +1,285 @@
+﻿<UserControl x:Class="CRUD_proj.Views.EditView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CRUD_proj.Views"
+             xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
+             xmlns:design="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:infr="clr-namespace:CRUD_proj.Infrastructure"
+             xmlns:conv="clr-namespace:CRUD_proj.Infrastructure.Converters"
+             mc:Ignorable="d"
+             xmlns:valid="clr-namespace:CRUD_proj.Infrastructure.Validators"
+             TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+             TextElement.FontWeight="Regular"
+             TextElement.FontSize="13"
+             TextOptions.TextFormattingMode="Ideal" 
+             TextOptions.TextRenderingMode="Auto"
+             Background="{DynamicResource MaterialDesignPaper}"
+             FontFamily="{StaticResource MaterialDesignFont}">
+    <UserControl.DataContext>
+        <infr:ViewModelLocator/>
+    </UserControl.DataContext>
+    <Grid DataContext="{Binding EditViewModel}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+        <ScrollViewer MaxHeight="400" VerticalScrollBarVisibility="Auto">
+            <DockPanel Margin="20">
+                <TextBox x:Name="title"
+                    Margin="10"
+            DockPanel.Dock="Top"
+            design:HintAssist.Hint="{Binding LocalizationManager.TitleTitle}"
+            Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                    <TextBox.Text>
+                        <Binding Path="Smartphone.Title" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <valid:NotEmptyValidationRule ValidatesOnTargetUpdated="True"/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+                <TextBox
+                    Margin="10"
+            DockPanel.Dock="Top"
+            design:HintAssist.Hint="{Binding LocalizationManager.PriceTitle}"
+            Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                    <TextBox.Text>
+                        <Binding Path="Smartphone.Price" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <valid:DoubleValidationRule ValidatesOnTargetUpdated="True"/>
+                            </Binding.ValidationRules>
+                            <Binding.Converter>
+                                <conv:EmptyValueConverterTwoWay/>
+                            </Binding.Converter>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+                <TextBox
+            Margin="10"
+            DockPanel.Dock="Top"
+            design:HintAssist.Hint="{Binding LocalizationManager.PicturePathTitle}"
+            Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                    <TextBox.Text>
+                        <Binding Path="Smartphone.PhotoPath" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <valid:PictureSourceValidator ValidatesOnTargetUpdated="True"/>
+                            </Binding.ValidationRules>
+                            <Binding.Converter>
+                                <conv:PathConverter/>
+                            </Binding.Converter>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+                <Image Width="400"
+               Margin="10"
+               DockPanel.Dock="Top"
+               HorizontalAlignment="Center"
+               Source="{Binding Smartphone.PhotoPath}"/>
+                <Button Style="{StaticResource MaterialDesignRaisedButton}"
+                Content="{Binding LocalizationManager.SaveBtnText}"
+                        Margin="10"
+               DockPanel.Dock="Top"
+                Command="{x:Static wpf:DialogHost.CloseDialogCommand}"/>
+                <Button Style="{StaticResource MaterialDesignRaisedButton}"
+                        Margin="10"
+               DockPanel.Dock="top"
+                Content="{Binding LocalizationManager.CancelBtnText}"
+                Command="{x:Static wpf:DialogHost.CloseDialogCommand}"
+                        CommandParameter="Cancel"/>
+            </DockPanel>
+        </ScrollViewer>
+        <ScrollViewer MaxHeight="400" Grid.Column="2" VerticalScrollBarVisibility="Auto">
+            <DockPanel Margin="20" >
+                <TextBox
+                    Margin="3"
+            DockPanel.Dock="Top"
+            design:HintAssist.Hint="{Binding LocalizationManager.ManufacturerTitle}"
+            Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+            Text="{Binding Smartphone.Manufacturer, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBox
+                    Margin="3"
+            DockPanel.Dock="Top"
+            design:HintAssist.Hint="{Binding LocalizationManager.DisplaySizeTitle}"
+            Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                    <TextBox.Text>
+                        <Binding Path="Smartphone.DisplaySize" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <valid:NotStrictDoubleValidationRule ValidatesOnTargetUpdated="True"/>
+                            </Binding.ValidationRules>
+                            <Binding.Converter>
+                                <conv:EmptyValueConverterTwoWay/>
+                            </Binding.Converter>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+                <Grid DockPanel.Dock="Top">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="3*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox
+                    Margin="30 20 20 20"
+            design:HintAssist.Hint="{Binding LocalizationManager.DisplayResolutionTitle}"
+            Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                        <TextBox.Text>
+                            <Binding Path="Smartphone.Resolution.Horizontal" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <valid:NotStrictIntValidationRule ValidatesOnTargetUpdated="True"/>
+                                </Binding.ValidationRules>
+                                <Binding.Converter>
+                                    <conv:EmptyValueConverterTwoWay/>
+                                </Binding.Converter>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <TextBlock Text="x" VerticalAlignment="Center" Grid.Column="2"/>
+                    <TextBox
+                    Margin="20"
+                        Grid.Column="3"
+            design:HintAssist.Hint="{Binding LocalizationManager.DisplayResolutionTitle}"
+            Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                        <TextBox.Text>
+                            <Binding Path="Smartphone.Resolution.Vertical" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <valid:NotStrictIntValidationRule ValidatesOnTargetUpdated="True"/>
+                                </Binding.ValidationRules>
+                                <Binding.Converter>
+                                    <conv:EmptyValueConverterTwoWay/>
+                                </Binding.Converter>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                </Grid>
+                <TextBox
+                    Margin="3"
+            DockPanel.Dock="Top"
+            design:HintAssist.Hint="{Binding LocalizationManager.RamTitle}"
+            Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                    <TextBox.Text>
+                        <Binding Path="Smartphone.Ram" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <valid:NotStrictIntValidationRule ValidatesOnTargetUpdated="True"/>
+                            </Binding.ValidationRules>
+                            <Binding.Converter>
+                                <conv:EmptyValueConverterTwoWay/>
+                            </Binding.Converter>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+                <TextBox
+                    Margin="3"
+            DockPanel.Dock="Top"
+            design:HintAssist.Hint="{Binding LocalizationManager.RomTitle}"
+            Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                    <TextBox.Text>
+                        <Binding Path="Smartphone.Rom" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <valid:NotStrictIntValidationRule ValidatesOnTargetUpdated="True"/>
+                            </Binding.ValidationRules>
+                            <Binding.Converter>
+                                <conv:EmptyValueConverterTwoWay/>
+                            </Binding.Converter>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+                <TextBox
+                    Margin="3"
+            DockPanel.Dock="Top"
+            design:HintAssist.Hint="{Binding LocalizationManager.CpuSpeedTitle}"
+            Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                    <TextBox.Text>
+                        <Binding Path="Smartphone.CpuSpeed" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <valid:NotStrictDoubleValidationRule ValidatesOnTargetUpdated="True"/>
+                            </Binding.ValidationRules>
+                            <Binding.Converter>
+                                <conv:EmptyValueConverterTwoWay/>
+                            </Binding.Converter>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+                <TextBox
+                    Margin="3"
+            DockPanel.Dock="Top"
+            design:HintAssist.Hint="{Binding LocalizationManager.CpuTypeTitle}"
+            Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+            Text="{Binding Smartphone.CpuType, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBox
+                    Margin="3"
+            DockPanel.Dock="Top"
+            design:HintAssist.Hint="{Binding LocalizationManager.RearCameraResolutionTitle}"
+            Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                    <TextBox.Text>
+                        <Binding Path="Smartphone.RearCameraRes" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <valid:NotStrictDoubleValidationRule ValidatesOnTargetUpdated="True"/>
+                            </Binding.ValidationRules>
+                            <Binding.Converter>
+                                <conv:EmptyValueConverterTwoWay/>
+                            </Binding.Converter>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+                <TextBox
+                    Margin="3"
+            DockPanel.Dock="Top"
+            design:HintAssist.Hint="{Binding LocalizationManager.FrontCameraResolutionTitle}"
+            Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                    <TextBox.Text>
+                        <Binding Path="Smartphone.FrontCameraRes" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <valid:NotStrictDoubleValidationRule ValidatesOnTargetUpdated="True"/>
+                            </Binding.ValidationRules>
+                            <Binding.Converter>
+                                <conv:EmptyValueConverterTwoWay/>
+                            </Binding.Converter>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+                <TextBox
+                    Margin="3"
+            DockPanel.Dock="Top"
+            design:HintAssist.Hint="{Binding LocalizationManager.OsTitle}"
+            Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+            Text="{Binding Smartphone.Os, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBox
+                    Margin="3"
+            DockPanel.Dock="Top"
+            design:HintAssist.Hint="{Binding LocalizationManager.BatteryCapacityTitle}"
+            Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                    <TextBox.Text>
+                        <Binding Path="Smartphone.BatteryCapacity" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <valid:NotStrictIntValidationRule ValidatesOnTargetUpdated="True"/>
+                            </Binding.ValidationRules>
+                            <Binding.Converter>
+                                <conv:EmptyValueConverterTwoWay/>
+                            </Binding.Converter>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+                <TextBox
+                    Margin="3"
+            DockPanel.Dock="Top"
+            design:HintAssist.Hint="{Binding LocalizationManager.ConnectionTitle}"
+            Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+            Text="{Binding Smartphone.Connection, UpdateSourceTrigger=PropertyChanged}"/>
+                <CheckBox
+                    Margin="10"
+            DockPanel.Dock="Top"
+            Content="{Binding LocalizationManager.NfcTitle}"
+                    IsThreeState="True"
+            IsChecked="{Binding Smartphone.Nfc}"/>
+                <CheckBox
+                    Margin="10 3 10 3"
+            DockPanel.Dock="Top"
+            Content="{Binding LocalizationManager.JackTitle}"
+                    IsThreeState="True"
+            IsChecked="{Binding Smartphone.ThreePointFiveJack}"/>
+            </DockPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

@@ -1,0 +1,14 @@
+{
+  "IsDark": true,
+  "Culture": "ru-RU",
+  "ImageHeight": 198,
+  "CardSize": 288,
+  "WindowResolution": {
+    "Horizontal": 1549,
+    "Vertical": 877
+  },
+  "WindowState": 2,
+  "WindowStyle": 0,
+  "LoadOnOpening": true,
+  "SaveOnClosing": true
+}
