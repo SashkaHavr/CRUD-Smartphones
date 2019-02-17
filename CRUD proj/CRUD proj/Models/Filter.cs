@@ -188,51 +188,39 @@ namespace CRUD_proj.Models
         void RemoveFilterUpdate(Smartphone smartphone)
         {
             Update = true;
-            if (smartphone.Price == price.MaxTo || smartphone.Price == price.MinFrom)
-                    FromToRemoveUpdateFilter(ref price, "Price");
-            if(smartphone.DisplaySize == displaySize.MaxTo || smartphone.DisplaySize == displaySize.MinFrom)
-                    FromToRemoveUpdateFilter(ref displaySize, "DisplaySize");
-            if(smartphone.CpuSpeed == cpuSpeed.MaxTo || smartphone.CpuSpeed == cpuSpeed.MinFrom)
-                    FromToRemoveUpdateFilter(ref cpuSpeed, "CpuSpeed");
-            if(smartphone.FrontCameraRes == frontCameraResolution.MaxTo || smartphone.FrontCameraRes == frontCameraResolution.MinFrom)
-                    FromToRemoveUpdateFilter(ref frontCameraResolution, "FrontCameraRes");
-            if(smartphone.RearCameraRes == rearCameraResolution.MaxTo || smartphone.RearCameraRes == rearCameraResolution.MinFrom)
-                    FromToRemoveUpdateFilter(ref rearCameraResolution, "RearCameraRes");
-            if(smartphone.BatteryCapacity == batteryCapacity.MaxTo || smartphone.BatteryCapacity == batteryCapacity.MinFrom)
-                    FromToRemoveUpdateFilter(ref batteryCapacity, "BatteryCapacity");
-             if(smartphone.Ram == ram.MaxTo || smartphone.Ram == ram.MinFrom)
-                    FromToRemoveUpdateFilter(ref ram, "Ram");
-            if (smartphone.Rom == rom.MaxTo || smartphone.Rom == rom.MinFrom)
-                    FromToRemoveUpdateFilter(ref rom, "Rom");
-            if (CanRemoveFilter(smartphone, "Manufacturer"))
-                Manufacturers.Remove(smartphone.Manufacturer);
-            if (CanRemoveFilter(smartphone, "CpuType"))
-                CpuTypes.Remove(smartphone.CpuType);
-            if (CanRemoveFilter(smartphone, "Connection"))
-                Connections.Remove(smartphone.Connection);
-            if (CanRemoveFilter(smartphone, "Os"))
-                Oss.Remove(smartphone.Os);
-            if (CanRemoveResolutionFilter(smartphone))
-                Resolutions.Remove(smartphone.Resolution.ToString());
+            FromToRemoveUpdateFilter(ref price, "Price", smartphone);
+            FromToRemoveUpdateFilter(ref displaySize, "DisplaySize", smartphone);
+            FromToRemoveUpdateFilter(ref cpuSpeed, "CpuSpeed", smartphone);
+            FromToRemoveUpdateFilter(ref frontCameraResolution, "FrontCameraRes", smartphone);
+            FromToRemoveUpdateFilter(ref rearCameraResolution, "RearCameraRes", smartphone);
+            FromToRemoveUpdateFilter(ref batteryCapacity, "BatteryCapacity", smartphone);
+            FromToRemoveUpdateFilter(ref ram, "Ram", smartphone);
+            FromToRemoveUpdateFilter(ref rom, "Rom", smartphone);
+            TryRemoveFilter(smartphone, "Manufacturer", Manufacturers);
+            TryRemoveFilter(smartphone, "CpuType", CpuTypes);
+            TryRemoveFilter(smartphone, "Connection", Connections);
+            TryRemoveFilter(smartphone, "Os", Oss);
+            TryRemoveFilter(smartphone, "Resolution", Resolutions);
             NotifyFromTo();
             Update = false;
+        }
+        #endregion
+
+        #region HelpFilterUpdates
+        void TryRemoveFilter(Smartphone smartphone, string propName, ObservableCollection<string> list)
+        {
+            var prop = typeof(Smartphone).GetProperty(propName);
+            if (CanRemoveFilter(smartphone, propName))
+                list.Remove(prop.GetValue(smartphone).ToString());
         }
 
         bool CanRemoveFilter(Smartphone smartphone, string propName)
         {
             var prop = typeof(Smartphone).GetProperty(propName);
             foreach (var i in Smartphones)
-                if (prop.GetValue(i) == prop.GetValue(smartphone))
+                if (prop.GetValue(i).ToString() == prop.GetValue(smartphone).ToString())
                     return false;
              return true;
-        }
-
-        bool CanRemoveResolutionFilter(Smartphone smartphone)
-        {
-            foreach (var i in Smartphones)
-                if (i.Resolution.ToString() == smartphone.Resolution.ToString())
-                    return false;
-            return true;
         }
 
         void FromToUpdateFilter(ref FromToDoubleString fromToDoubleString, string param)
@@ -258,48 +246,50 @@ namespace CRUD_proj.Models
                 fromToInteger.MaxTo = param;
         }
 
-        void FromToRemoveUpdateFilter(ref FromToDoubleString fromToDoubleString, string propName)
+        void FromToRemoveUpdateFilter(ref FromToDoubleString fromToDoubleString, string propName, Smartphone removedSmartphone)
         {
-            if (Smartphones.Count > 0)
-            {
-                var prop = typeof(Smartphone).GetProperty(propName);
-                fromToDoubleString.MinFrom = fromToDoubleString.MaxTo = prop.GetValue(Smartphones[0]).ToString();
-                foreach (var smartphone in Smartphones)
+            var prop = typeof(Smartphone).GetProperty(propName);
+            if (prop.GetValue(removedSmartphone).ToString() == fromToDoubleString.MaxTo || prop.GetValue(removedSmartphone).ToString() == fromToDoubleString.MinFrom)
+                if (Smartphones.Count > 0)
                 {
-                    string val = prop.GetValue(smartphone).ToString();
-                    if (DSNSSmaller(val, fromToDoubleString.MinFrom))
-                        fromToDoubleString.MinFrom = val;
-                    if (DSNSBigger(val, fromToDoubleString.MaxTo))
-                        fromToDoubleString.MaxTo = val;
+                    fromToDoubleString.MinFrom = fromToDoubleString.MaxTo = prop.GetValue(Smartphones[0]).ToString();
+                    foreach (var smartphone in Smartphones)
+                    {
+                        string val = prop.GetValue(smartphone).ToString();
+                        if (DSNSSmaller(val, fromToDoubleString.MinFrom))
+                            fromToDoubleString.MinFrom = val;
+                        if (DSNSBigger(val, fromToDoubleString.MaxTo))
+                            fromToDoubleString.MaxTo = val;
+                    }
                 }
-            }
-            else
-            {
-                fromToDoubleString.MinFrom = "0";
-                fromToDoubleString.MaxTo = "0";
-            }
+                else
+                {
+                    fromToDoubleString.MinFrom = "0";
+                    fromToDoubleString.MaxTo = "0";
+                }
         }
 
-        void FromToRemoveUpdateFilter(ref FromToInteger fromToInteger, string propName)
+        void FromToRemoveUpdateFilter(ref FromToInteger fromToInteger, string propName, Smartphone removedSmartphone)
         {
-            if (Smartphones.Count > 0)
-            {
-                var prop = typeof(Smartphone).GetProperty(propName);
-                fromToInteger.MinFrom = fromToInteger.MaxTo = (int)prop.GetValue(Smartphones[0]);
-                foreach (var smartphone in Smartphones)
+            var prop = typeof(Smartphone).GetProperty(propName);
+            if ((int)prop.GetValue(removedSmartphone) == fromToInteger.MaxTo || (int)prop.GetValue(removedSmartphone) == fromToInteger.MinFrom)
+                if (Smartphones.Count > 0)
                 {
-                    int val = (int)prop.GetValue(smartphone);
-                    if (val <= fromToInteger.MinFrom)
-                        fromToInteger.MinFrom = val;
-                    if (val >= fromToInteger.MaxTo)
-                        fromToInteger.MaxTo = val;
+                    fromToInteger.MinFrom = fromToInteger.MaxTo = (int)prop.GetValue(Smartphones[0]);
+                    foreach (var smartphone in Smartphones)
+                    {
+                        int val = (int)prop.GetValue(smartphone);
+                        if (val <= fromToInteger.MinFrom)
+                            fromToInteger.MinFrom = val;
+                        if (val >= fromToInteger.MaxTo)
+                            fromToInteger.MaxTo = val;
+                    }
                 }
-            }
-            else
-            {
-                fromToInteger.MinFrom = 0;
-                fromToInteger.MaxTo = 0;
-            }
+                else
+                {
+                    fromToInteger.MinFrom = 0;
+                    fromToInteger.MaxTo = 0;
+                }
         }
 
 
