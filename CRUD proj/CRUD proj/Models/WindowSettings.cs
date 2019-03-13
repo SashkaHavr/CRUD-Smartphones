@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Threading;
 using System.Windows;
+using DAL;
 using System.Windows.Media.Imaging;
 
 namespace CRUD_proj.Models

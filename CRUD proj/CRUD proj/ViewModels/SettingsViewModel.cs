@@ -1,4 +1,5 @@
-﻿using CRUD_proj.Models;
+﻿using DAL;
+using CRUD_proj.Models;
 using System.ComponentModel;
 using System.Windows;
 

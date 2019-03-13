@@ -11,6 +11,7 @@ using CRUD_proj.Models;
 using CRUD_proj.Models.Save_Load;
 using CRUD_proj.Views;
 using MaterialDesignThemes.Wpf;
+using DAL;
 
 namespace CRUD_proj.ViewModels
 {
@@ -27,8 +28,7 @@ namespace CRUD_proj.ViewModels
         SettingsView settingsView = new SettingsView();
         IWindowSettingsSaver settingsSaver;
         IWindowSettingsLoader settingsLoader;
-        IDataSaver dataSaver;
-        IDataLoader dataLoader;
+        ISmartphoonesRepository repository;
 
         #region ICommands
         ICommand addCommand;
@@ -43,7 +43,7 @@ namespace CRUD_proj.ViewModels
         ICommand clearAllCommand;
 
         public ICommand AddCommand { get => addCommand ?? (addCommand = new RelayCommand(AddCommandCall)); }
-        public ICommand DeleteCommand { get => deleteCommand ?? (deleteCommand = new RelayCommand(o => Smartphones.Remove(o as Smartphone))); }
+        public ICommand DeleteCommand { get => deleteCommand ?? (deleteCommand = new RelayCommand(o => { Smartphones.Remove(o as Smartphone); repository.Delete((o as Smartphone).Id); })); }
         public ICommand EditCommand { get => editCommand ?? (editCommand = new RelayCommand(EditCommandCall)); }
         public ICommand SettingsCommand { get => settingsCommand ?? (settingsCommand = new RelayCommand(SettingsCommandCall)); }
         public ICommand SaveCommand { get => saveCommand ?? (saveCommand = new RelayCommand(SaveCommandCall)); }
@@ -51,7 +51,7 @@ namespace CRUD_proj.ViewModels
         public ICommand ClosedCommand { get => closedCommand ?? (closedCommand = new RelayCommand(ClosedCommandCall)); }
         public ICommand CloseWindowCommand { get => closeWindowCommand ?? (closeWindowCommand = new RelayCommand(o => (o as Window).Close())); }
         public ICommand FilterResetCommand { get => filterResetCommand ?? (filterResetCommand = new RelayCommand(o => Filter.Reset())); }
-        public ICommand ClearAllCommand { get => clearAllCommand ?? (clearAllCommand = new RelayCommand(o => { Smartphones = new ObservableCollection<Smartphone>(); Filter.Reset(); },
+        public ICommand ClearAllCommand { get => clearAllCommand ?? (clearAllCommand = new RelayCommand(ClearCommandCall,
                                                                                         b => Filter.Smartphones.Count != 0)); }
         #endregion
 
@@ -79,19 +79,19 @@ namespace CRUD_proj.ViewModels
         public Sorter Sorter { get; }
         public Filter Filter { get; }
 
-        public MainViewModel(IWindowSettingsSaver settingsSaver, IWindowSettingsLoader settingsLoader, IDataSaver dataSaver, IDataLoader dataLoader)
+        public MainViewModel(IWindowSettingsSaver settingsSaver, IWindowSettingsLoader settingsLoader, ISmartphoonesRepository repository)
         {
             WindowSettings = settingsLoader.Load();
             Sorter = new Sorter();
             Filter = new Filter();
+            this.repository = repository;
+            repository.Load();
             if (windowSettings.LoadOnOpening)
-                Smartphones = new ObservableCollection<Smartphone>(dataLoader.Load());
+                Smartphones = new ObservableCollection<Smartphone>(repository.GetAll());
             else
                 Smartphones = new ObservableCollection<Smartphone>();
             this.settingsSaver = settingsSaver;
             this.settingsLoader = settingsLoader;
-            this.dataSaver = dataSaver;
-            this.dataLoader = dataLoader;
         }
 
 
@@ -125,7 +125,7 @@ namespace CRUD_proj.ViewModels
         public void ClosedCommandCall(object o)
         {
             if (windowSettings.SaveOnClosing)
-                dataSaver.Save(Filter.Smartphones);
+                repository.Save();
             settingsSaver.Save(WindowSettings);
         }
 
@@ -136,6 +136,7 @@ namespace CRUD_proj.ViewModels
             await DialogHost.Show(editView, DialogOpening, EditClosing);
             if ((editView.DataContext as ViewModelLocator).EditViewModel.Smartphone != null)
             {
+                smartphone.Id = repository.Add(smartphone);
                 Smartphones.Add(smartphone);
                 Sorter.Sort();
             }
@@ -155,6 +156,7 @@ namespace CRUD_proj.ViewModels
             }
             else
             {
+                repository.Update(cancelEditSmartphone);
                 Sorter.Sort();
                 Filter.EditFilterUpdate(o as Smartphone, cancelEditSmartphone);
             }
@@ -168,7 +170,7 @@ namespace CRUD_proj.ViewModels
 
         void SaveCommandCall(object o)
         {
-            Task task = new Task(() => dataSaver.Save(Filter.Smartphones));
+            Task task = new Task(() => repository.Save());
             task.ContinueWith(t => IsSaving = false);
             task.ContinueWith(t => MessageQueue.Enqueue("Saved"));
             IsSaving = true;
@@ -177,11 +179,20 @@ namespace CRUD_proj.ViewModels
 
         void LoadCommandCall(object o)
         {
-            Task task = new Task(() => Smartphones = new ObservableCollection<Smartphone>(dataLoader.Load()));
+            repository.Load();
+            Task task = new Task(() => Smartphones = new ObservableCollection<Smartphone>(repository.GetAll()));
             task.ContinueWith(t => IsLoading = false);
             task.ContinueWith(t => MessageQueue.Enqueue("Loaded"));
             IsLoading = true;
             task.Start();
+        }
+
+        void ClearCommandCall(object o)
+        {
+            foreach (var smartphone in Smartphones)
+                repository.Delete(smartphone.Id);
+            Smartphones = new ObservableCollection<Smartphone>();
+            Filter.Reset();
         }
 
         #endregion

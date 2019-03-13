@@ -9,8 +9,7 @@ namespace CRUD_proj.Infrastructure.Modules
         {
             Bind<IWindowSettingsLoader>().To<JSOMWindowSettingsLoader>();
             Bind<IWindowSettingsSaver>().To<JSONWindoSettingsSaver>();
-            Bind<IDataSaver>().To<DBDataSaver>();
-            Bind<IDataLoader>().To<DBDataLoader>();
+            Bind<ISmartphoonesRepository>().To<SqlLiteSmartphonesRepositoryAdapter>();
         }
     }
 }

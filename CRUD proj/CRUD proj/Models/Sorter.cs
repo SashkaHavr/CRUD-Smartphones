@@ -1,4 +1,5 @@
-﻿using CRUD_proj.Models.Smartphone_IComparers;
+﻿using DAL;
+using CRUD_proj.Models.Smartphone_IComparers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using DAL;
+using System.Collections.Generic;
 using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Threading;

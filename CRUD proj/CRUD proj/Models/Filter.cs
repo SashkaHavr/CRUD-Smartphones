@@ -1,4 +1,5 @@
-﻿using CRUD_proj.Models.Structs;
+﻿using DAL;
+using CRUD_proj.Models.Structs;
 using LinqKit;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

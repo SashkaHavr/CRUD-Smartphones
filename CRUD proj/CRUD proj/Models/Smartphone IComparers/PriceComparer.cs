@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using DAL;
+using System.Collections.Generic;
 
 namespace CRUD_proj.Models.Smartphone_IComparers
 {

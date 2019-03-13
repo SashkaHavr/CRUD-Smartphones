@@ -1,4 +1,5 @@
 ﻿using CRUD_proj.Models;
+using DAL;
 
 namespace CRUD_proj.ViewModels
 {

@@ -1,4 +1,5 @@
-﻿namespace CRUD_proj.Models.Structs
+﻿using DAL;
+namespace CRUD_proj.Models.Structs
 {
     struct FromToDoubleString
     {
